@@ -18,4 +18,28 @@ public class CourseSettings extends BaseEntity {
 
   @Column(name = "is_public")
   private Boolean isPublic;
+
+  public LocalDateTime getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(LocalDateTime startDate) {
+    this.startDate = startDate;
+  }
+
+  public LocalDateTime getEndDate() {
+    return endDate;
+  }
+
+  public void setEndDate(LocalDateTime endDate) {
+    this.endDate = endDate;
+  }
+
+  public Boolean getPublic() {
+    return isPublic;
+  }
+
+  public void setPublic(Boolean aPublic) {
+    isPublic = aPublic;
+  }
 }
