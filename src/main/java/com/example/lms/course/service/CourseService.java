@@ -5,6 +5,7 @@ import com.example.lms.course.dto.CourseResponseDto;
 import com.example.lms.course.mapper.CourseMapper;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CourseService {
   private final CourseRepository courseRepository;
   private final CourseMapper courseMapper;
+
+  private static final String COURSE_NOT_FOUND = "Course not found with id: ";
 
   @Transactional
   public CourseResponseDto createCourse(CourseRequestDto courseRequestDto) {
@@ -34,7 +37,7 @@ public class CourseService {
 
   @Transactional
   public CourseResponseDto updateCourse(UUID id, CourseRequestDto courseRequestDto) {
-    Course course = courseRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Course not found: " + id));
+    Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + id));
     course.setTitle(courseRequestDto.title());
     course.setDescription(courseRequestDto.description());
     course.setPrice(courseRequestDto.price());
@@ -47,7 +50,7 @@ public class CourseService {
   @Transactional
   public void deleteCourse(UUID id) {
     Course course = courseRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Course not found: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + id));
     courseRepository.delete(course);
   }
 

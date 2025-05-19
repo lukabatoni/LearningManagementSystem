@@ -2,6 +2,7 @@ package com.example.lms.lesson.service;
 
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.exception.ResourceNotFoundException;
 import com.example.lms.lesson.dto.LessonRequestDto;
 import com.example.lms.lesson.dto.LessonResponseDto;
 import com.example.lms.lesson.mapper.LessonMapper;
@@ -20,10 +21,13 @@ public class LessonService {
   private final LessonMapper lessonMapper;
   private final CourseRepository courseRepository;
 
+  private static final String LESSON_NOT_FOUND = "Lesson not found with id: ";
+  private static final String COURSE_NOT_FOUND = "Course not found with id: ";
+
   @Transactional
   public LessonResponseDto createLesson(LessonRequestDto requestDto) {
     Course course = courseRepository.findById(requestDto.courseId())
-        .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + requestDto.courseId()));
+        .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + requestDto.courseId()));
 
     Lesson lesson = lessonMapper.toEntity(requestDto);
     lesson.setCourse(course);
@@ -42,10 +46,10 @@ public class LessonService {
   @Transactional
   public LessonResponseDto updateLesson(UUID id, LessonRequestDto requestDto) {
     Lesson lesson = lessonRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Lesson not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(LESSON_NOT_FOUND + id));
 
     Course course = courseRepository.findById(requestDto.courseId())
-        .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + requestDto.courseId()));
+        .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + requestDto.courseId()));
 
     lesson.setTitle(requestDto.title());
     lesson.setDuration(requestDto.duration());
@@ -58,7 +62,7 @@ public class LessonService {
   @Transactional
   public void deleteLesson(UUID id) {
     Lesson lesson = lessonRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Lesson not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(LESSON_NOT_FOUND + id));
     lessonRepository.delete(lesson);
   }
 

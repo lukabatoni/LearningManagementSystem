@@ -1,5 +1,6 @@
 package com.example.lms.student.service;
 
+import com.example.lms.exception.ResourceNotFoundException;
 import com.example.lms.student.dto.StudentRequestDto;
 import com.example.lms.student.dto.StudentResponseDto;
 import com.example.lms.student.mapper.StudentMapper;
@@ -16,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentService {
   private final StudentRepository studentRepository;
   private final StudentMapper studentMapper;
+
+  private static final String STUDENT_NOT_FOUND = "Student not found with id: ";
+
 
   @Transactional
   public StudentResponseDto createStudent(StudentRequestDto requestDto) {
@@ -34,7 +38,7 @@ public class StudentService {
   @Transactional
   public StudentResponseDto updateStudent(UUID id, StudentRequestDto requestDto) {
     Student student = studentRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Student not found: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + id));
 
     student.setFirstName(requestDto.firstName());
     student.setLastName(requestDto.lastName());
@@ -48,7 +52,7 @@ public class StudentService {
   @Transactional
   public void deleteStudent(UUID id) {
     Student student = studentRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Student not found: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + id));
     studentRepository.delete(student);
   }
 }
