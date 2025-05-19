@@ -5,6 +5,8 @@ import com.example.lms.student.dto.StudentResponseDto;
 import com.example.lms.student.mapper.StudentMapper;
 import com.example.lms.student.model.Student;
 import com.example.lms.student.repository.StudentRepository;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,35 @@ public class StudentService {
   @Transactional
   public StudentResponseDto createStudent(StudentRequestDto requestDto) {
     Student student = studentMapper.toEntity(requestDto);
-    Student saved = studentRepository.save(student);
-    return studentMapper.toResponseDto(saved);
+    Student savedStudent = studentRepository.save(student);
+    return studentMapper.toResponseDto(savedStudent);
+  }
+
+  public List<StudentResponseDto> getAllStudents() {
+    List<Student> students = studentRepository.findAll();
+    return students.stream()
+        .map(studentMapper::toResponseDto)
+        .toList();
+  }
+
+  @Transactional
+  public StudentResponseDto updateStudent(UUID id, StudentRequestDto requestDto) {
+    Student student = studentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Student not found: " + id));
+
+    student.setFirstName(requestDto.firstName());
+    student.setLastName(requestDto.lastName());
+    student.setEmail(requestDto.email());
+    student.setDateOfBirth(requestDto.dateOfBirth());
+    student.setCoins(requestDto.coins());
+    Student updatedStudent = studentRepository.save(student);
+    return studentMapper.toResponseDto(updatedStudent);
+  }
+
+  @Transactional
+  public void deleteStudent(UUID id) {
+    Student student = studentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Student not found: " + id));
+    studentRepository.delete(student);
   }
 }

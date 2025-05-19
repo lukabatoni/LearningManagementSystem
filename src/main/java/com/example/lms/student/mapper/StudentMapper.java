@@ -21,6 +21,8 @@ public interface StudentMapper {
   @Named("mapCourseIds")
   default Set<UUID> mapCourseIds(Set<Course> courses) {
     if (courses == null) return null;
-    return courses.stream().map(Course::getId).collect(Collectors.toSet());
+    return courses.stream()
+        .map(Course::getId)
+        .collect(Collectors.toSet());
   }
 }

@@ -5,8 +5,13 @@ import com.example.lms.student.dto.StudentResponseDto;
 import com.example.lms.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +30,20 @@ public class StudentController {
   @PostMapping
   public StudentResponseDto createStudent(@RequestBody StudentRequestDto requestDto) {
     return studentService.createStudent(requestDto);
+  }
+
+  @GetMapping
+  public List<StudentResponseDto> getAllStudents() {
+    return studentService.getAllStudents();
+  }
+
+  @PutMapping
+  public StudentResponseDto updateStudent(UUID id, @RequestBody StudentRequestDto requestDto) {
+    return studentService.updateStudent(id, requestDto);
+  }
+
+  @DeleteMapping
+  public void deleteStudent(UUID id) {
+    studentService.deleteStudent(id);
   }
 }
