@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,22 +30,38 @@ public class StudentController {
       description = "Creates a new student with the provided details"
   )
   @PostMapping
-  public StudentResponseDto createStudent(@RequestBody StudentRequestDto requestDto) {
-    return studentService.createStudent(requestDto);
+  public ResponseEntity<StudentResponseDto> createStudent(@RequestBody StudentRequestDto requestDto) {
+    StudentResponseDto response = studentService.createStudent(requestDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
+  @Operation(
+      summary = "Get all students",
+      description = "Retrieves a list of all students"
+  )
   @GetMapping
-  public List<StudentResponseDto> getAllStudents() {
-    return studentService.getAllStudents();
+  public ResponseEntity<List<StudentResponseDto>> getAllStudents() {
+    List<StudentResponseDto> students = studentService.getAllStudents();
+    return ResponseEntity.ok(students);
   }
 
+  @Operation(
+      summary = "Update a student",
+      description = "Updates the details of an existing student"
+  )
   @PutMapping
-  public StudentResponseDto updateStudent(UUID id, @RequestBody StudentRequestDto requestDto) {
-    return studentService.updateStudent(id, requestDto);
+  public ResponseEntity<StudentResponseDto> updateStudent(UUID id, @RequestBody StudentRequestDto requestDto) {
+    StudentResponseDto response = studentService.updateStudent(id, requestDto);
+    return ResponseEntity.ok(response);
   }
 
+  @Operation(
+      summary = "Delete a student",
+      description = "Deletes a student by ID"
+  )
   @DeleteMapping
-  public void deleteStudent(UUID id) {
+  public ResponseEntity<Void> deleteStudent(UUID id) {
     studentService.deleteStudent(id);
+    return ResponseEntity.noContent().build();
   }
 }
