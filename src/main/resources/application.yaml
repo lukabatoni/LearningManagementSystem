@@ -15,3 +15,15 @@ spring:
     console:
       enabled: true
       path: /h2-console
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers
+  endpoint:
+    health:
+      show-details: always
+info:
+  app:
+    name: Course Management API
+    version: 1.0.0
