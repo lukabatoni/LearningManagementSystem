@@ -5,6 +5,7 @@ import com.example.lms.lesson.dto.LessonResponseDto;
 import com.example.lms.lesson.service.LessonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class LessonController {
       description = "Creates a new lesson with the provided details"
   )
   @PostMapping
-  public ResponseEntity<LessonResponseDto> createLesson(@RequestBody LessonRequestDto requestDto) {
+  public ResponseEntity<LessonResponseDto> createLesson(@RequestBody @Valid LessonRequestDto requestDto) {
     LessonResponseDto response = lessonService.createLesson(requestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -51,7 +52,8 @@ public class LessonController {
       description = "Updates the details of an existing lesson"
   )
   @PutMapping("/{id}")
-  public ResponseEntity<LessonResponseDto> updateLesson(@PathVariable UUID id, @RequestBody LessonRequestDto requestDto) {
+  public ResponseEntity<LessonResponseDto> updateLesson(@PathVariable UUID id,
+                                                        @RequestBody @Valid LessonRequestDto requestDto) {
     LessonResponseDto response = lessonService.updateLesson(id, requestDto);
     return ResponseEntity.ok(response);
   }

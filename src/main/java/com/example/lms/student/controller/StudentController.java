@@ -5,6 +5,7 @@ import com.example.lms.student.dto.StudentResponseDto;
 import com.example.lms.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class StudentController {
       description = "Creates a new student with the provided details"
   )
   @PostMapping
-  public ResponseEntity<StudentResponseDto> createStudent(@RequestBody StudentRequestDto requestDto) {
+  public ResponseEntity<StudentResponseDto> createStudent(@RequestBody @Valid StudentRequestDto requestDto) {
     StudentResponseDto response = studentService.createStudent(requestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -50,7 +51,8 @@ public class StudentController {
       description = "Updates the details of an existing student"
   )
   @PutMapping
-  public ResponseEntity<StudentResponseDto> updateStudent(UUID id, @RequestBody StudentRequestDto requestDto) {
+  public ResponseEntity<StudentResponseDto> updateStudent(UUID id,
+                                                          @RequestBody @Valid StudentRequestDto requestDto) {
     StudentResponseDto response = studentService.updateStudent(id, requestDto);
     return ResponseEntity.ok(response);
   }

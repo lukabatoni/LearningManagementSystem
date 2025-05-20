@@ -6,6 +6,8 @@ import com.example.lms.course.mapper.CourseMapper;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
 import com.example.lms.exception.ResourceNotFoundException;
+import com.example.lms.student.model.Student;
+import com.example.lms.student.repository.StudentRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CourseService {
   private final CourseRepository courseRepository;
   private final CourseMapper courseMapper;
+  private final StudentRepository studentRepository;
 
   private static final String COURSE_NOT_FOUND = "Course not found with id: ";
+  private static final String STUDENT_NOT_FOUND = "Student not found with id: ";
 
   @Transactional
   public CourseResponseDto createCourse(CourseRequestDto courseRequestDto) {
@@ -54,4 +58,13 @@ public class CourseService {
     courseRepository.delete(course);
   }
 
+  @Transactional
+  public void enrollStudent(UUID courseId, UUID studentId) {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + courseId));
+    Student student = studentRepository.findById(studentId)
+        .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + studentId));
+    course.getStudents().add(student);
+    courseRepository.save(course);
+  }
 }

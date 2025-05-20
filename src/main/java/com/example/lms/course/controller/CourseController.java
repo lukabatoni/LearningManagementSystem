@@ -5,6 +5,7 @@ import com.example.lms.course.dto.CourseResponseDto;
 import com.example.lms.course.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class CourseController {
       description = "Creates a new course with the provided details"
   )
   @PostMapping
-  public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto requestDto) {
+  public ResponseEntity<CourseResponseDto> createCourse(@RequestBody @Valid CourseRequestDto requestDto) {
     CourseResponseDto response = courseService.createCourse(requestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -52,7 +53,8 @@ public class CourseController {
       description = "Updates the details of an existing course"
   )
   @PutMapping("/{id}")
-  public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable UUID id, @RequestBody CourseRequestDto requestDto) {
+  public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable UUID id,
+                                                        @RequestBody @Valid CourseRequestDto requestDto) {
     CourseResponseDto response = courseService.updateCourse(id, requestDto);
     return ResponseEntity.ok(response);
   }
@@ -65,5 +67,12 @@ public class CourseController {
   public ResponseEntity<Void> deleteCourse(@PathVariable UUID id) {
     courseService.deleteCourse(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{courseId}/students/{studentId}")
+  public ResponseEntity<Void> enrollStudent(@PathVariable UUID courseId,
+                                            @PathVariable UUID studentId) {
+    courseService.enrollStudent(courseId, studentId);
+    return ResponseEntity.ok().build();
   }
 }
