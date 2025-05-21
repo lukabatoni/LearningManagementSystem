@@ -1,11 +1,15 @@
 package com.example.lms.student.service;
 
+import com.example.lms.course.model.Course;
+import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.exception.CoinsNotEnoughException;
 import com.example.lms.exception.ResourceNotFoundException;
 import com.example.lms.student.dto.StudentRequestDto;
 import com.example.lms.student.dto.StudentResponseDto;
 import com.example.lms.student.mapper.StudentMapper;
 import com.example.lms.student.model.Student;
 import com.example.lms.student.repository.StudentRepository;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentService {
   private final StudentRepository studentRepository;
   private final StudentMapper studentMapper;
+  private final CourseRepository courseRepository;
 
   private static final String STUDENT_NOT_FOUND = "Student not found with id: ";
+  private static final String COURSE_NOT_FOUND = "Course not found with id: ";
+  private static final String COINS_NOT_ENOUGH = "Not enough coins to buy the course";
 
 
   @Transactional
@@ -54,5 +61,27 @@ public class StudentService {
     Student student = studentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + id));
     studentRepository.delete(student);
+  }
+
+  @Transactional
+  public void buyCourseWithCoins(UUID studentId, UUID courseId) {
+    Student student = studentRepository.findById(studentId)
+        .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + studentId));
+
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + courseId));
+
+    BigDecimal price = course.getPrice();
+    if (student.getCoins().compareTo(price) < 0) {
+      throw new CoinsNotEnoughException(COINS_NOT_ENOUGH);
+    }
+
+    student.setCoins(student.getCoins().subtract(price));
+    course.setCoinsPaid(course.getCoinsPaid().add(price));
+    course.getStudents().add(student);
+    student.getCourses().add(course);
+
+    studentRepository.save(student);
+    courseRepository.save(course);
   }
 }

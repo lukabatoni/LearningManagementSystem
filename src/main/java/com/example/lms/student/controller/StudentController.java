@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +65,18 @@ public class StudentController {
   @DeleteMapping
   public ResponseEntity<Void> deleteStudent(UUID id) {
     studentService.deleteStudent(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(
+      summary = "Buy a course with coins",
+      description = "Allows a student to buy a course using their coins"
+  )
+  @PostMapping("/{studentId}/buy-course/{courseId}")
+  public ResponseEntity<Void> buyCourseWithCoins(
+      @PathVariable UUID studentId,
+      @PathVariable UUID courseId) {
+    studentService.buyCourseWithCoins(studentId, courseId);
     return ResponseEntity.noContent().build();
   }
 }

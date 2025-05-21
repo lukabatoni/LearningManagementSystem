@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+  private static final String INVALID_VALUE = "Invalid value";
+  private static final String INVALID_REQUEST_DATA = "Invalid request data";
+  private static final String VALIDATION_FAILED = "Validation failed";
+
   @ExceptionHandler
   public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
     ErrorResponse errorResponse = new ErrorResponse(
@@ -32,12 +36,12 @@ public class GlobalExceptionHandler {
             FieldError::getField,
             fieldError -> fieldError.getDefaultMessage() != null
                 ? fieldError.getDefaultMessage()
-                : "Invalid value"
+                : INVALID_VALUE
         ));
 
     ErrorResponse errorResponse = new ErrorResponse(
         HttpStatus.BAD_REQUEST.value(),
-        "Validation failed",
+        VALIDATION_FAILED,
         System.currentTimeMillis(),
         errors
     );
@@ -54,15 +58,27 @@ public class GlobalExceptionHandler {
             FieldError::getField,
             fieldError -> fieldError.getDefaultMessage() != null
                 ? fieldError.getDefaultMessage()
-                : "Invalid value"
+                : INVALID_VALUE
         ));
 
     return ResponseEntity.badRequest()
         .body(new ErrorResponse(
             HttpStatus.BAD_REQUEST.value(),
-            "Invalid request data",
+            INVALID_REQUEST_DATA,
             System.currentTimeMillis(),
             errors
         ));
   }
+
+  @ExceptionHandler(CoinsNotEnoughException.class)
+  public ResponseEntity<ErrorResponse> handleCoinsNotEnoughException(CoinsNotEnoughException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        ex.getMessage(),
+        System.currentTimeMillis(),
+        Map.of()
+    );
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
+
 }
