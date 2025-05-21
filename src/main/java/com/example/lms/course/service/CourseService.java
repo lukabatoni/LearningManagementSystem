@@ -31,7 +31,7 @@ public class CourseService {
     return courseMapper.toResponseDto(savedCourse);
   }
 
-@Transactional
+  @Transactional
   public List<CourseResponseDto> getAllCourses() {
     List<Course> courses = courseRepository.findAll();
     return courses.stream()
@@ -67,4 +67,5 @@ public class CourseService {
     course.getStudents().add(student);
     courseRepository.save(course);
   }
+
 }
