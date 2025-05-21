@@ -17,9 +17,15 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
   Optional<Course> findByPrice(BigDecimal price);
 
   @Query("SELECT c FROM Course c JOIN c.settings s " +
-      "WHERE s.startDate BETWEEN :start AND :end")
+         "WHERE s.startDate BETWEEN :start AND :end")
   List<Course> findByStartDateBetween(
       @Param("start") LocalDateTime start,
       @Param("end") LocalDateTime end);
 
+  @Query(" select s.email from Course c " +
+         " join c.students s " +
+         " where c.settings.startDate between :start and :end")
+  List<String> findStudentEmailsForCoursesStartingBetween(
+      @Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end);
 }
