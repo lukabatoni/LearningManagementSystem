@@ -12,21 +12,21 @@ import org.springframework.stereotype.Service;
 public class MailtrapEmailService {
 
   private final MailtrapClient client;
-  private final String fromEmail = "hello@example.com";
-  private final String fromName = "Mailtrap Test";
+  private final MailtrapProperties properties;
 
-  public MailtrapEmailService() {
+  public MailtrapEmailService(MailtrapProperties properties) {
+    this.properties = properties;
     MailtrapConfig config = new MailtrapConfig.Builder()
-        .sandbox(true)
-        .inboxId(3713999L)
-        .token("bd8414f579199eda58f71a2eb166114a")
+        .sandbox(properties.isSandbox())
+        .inboxId(properties.getInboxId())
+        .token(properties.getToken())
         .build();
     this.client = MailtrapClientFactory.createMailtrapClient(config);
   }
 
   public void send(String to, String subject, String text) {
     MailtrapMail mail = MailtrapMail.builder()
-        .from(new Address(fromEmail, fromName))
+        .from(new Address(properties.getFromMail(), properties.getFromName()))
         .to(List.of(new Address(to)))
         .subject(subject)
         .text(text)
