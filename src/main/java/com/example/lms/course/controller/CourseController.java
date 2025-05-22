@@ -68,11 +68,4 @@ public class CourseController {
     courseService.deleteCourse(id);
     return ResponseEntity.noContent().build();
   }
-
-  @PostMapping("/{courseId}/students/{studentId}")
-  public ResponseEntity<Void> enrollStudent(@PathVariable UUID courseId,
-                                            @PathVariable UUID studentId) {
-    courseService.enrollStudent(courseId, studentId);
-    return ResponseEntity.ok().build();
-  }
 }

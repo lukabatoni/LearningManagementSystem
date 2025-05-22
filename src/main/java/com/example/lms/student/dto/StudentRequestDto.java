@@ -6,18 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record StudentRequestDto(
     @NotBlank(message = "First name is required")
-    @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
     @Pattern(regexp = "^[a-zA-Z\\-\\s']+$", message = "First name contains invalid characters")
     String firstName,
 
     @NotBlank(message = "Last name is required")
-    @Size(min = 1, max = 50, message = "Last name must be 1-50 characters")
     @Pattern(regexp = "^[a-zA-Z\\-\\s']+$", message = "Last name contains invalid characters")
     String lastName,
 

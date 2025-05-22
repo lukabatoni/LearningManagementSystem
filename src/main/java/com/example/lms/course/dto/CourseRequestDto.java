@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public record CourseRequestDto(
     @NotBlank(message = "Title cannot be blank")
-    @Size(min = 1, max = 20, message = "Title must be less than 1-20 characters")
+    @Size(max = 20, message = "Title must be less than 1-20 characters")
     String title,
 
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")

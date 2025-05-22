@@ -12,6 +12,7 @@ import com.example.lms.student.repository.StudentRepository;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class StudentService {
 
 
   @Transactional
-  public StudentResponseDto createStudent(StudentRequestDto requestDto) {
+  public StudentResponseDto createStudent(@NonNull final StudentRequestDto requestDto) {
     Student student = studentMapper.toEntity(requestDto);
     Student savedStudent = studentRepository.save(student);
     return studentMapper.toResponseDto(savedStudent);
@@ -43,7 +44,8 @@ public class StudentService {
   }
 
   @Transactional
-  public StudentResponseDto updateStudent(UUID id, StudentRequestDto requestDto) {
+  public StudentResponseDto updateStudent(@NonNull final UUID id,
+                                          @NonNull final StudentRequestDto requestDto) {
     Student student = studentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + id));
 
@@ -57,14 +59,15 @@ public class StudentService {
   }
 
   @Transactional
-  public void deleteStudent(UUID id) {
+  public void deleteStudent(@NonNull final UUID id) {
     Student student = studentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + id));
     studentRepository.delete(student);
   }
 
   @Transactional
-  public void buyCourseWithCoins(UUID studentId, UUID courseId) {
+  public void buyCourseWithCoins(@NonNull final UUID studentId,
+                                 @NonNull final UUID courseId) {
     Student student = studentRepository.findById(studentId)
         .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + studentId));
 

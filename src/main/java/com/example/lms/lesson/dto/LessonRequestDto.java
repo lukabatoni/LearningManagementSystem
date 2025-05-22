@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public record LessonRequestDto(
     @NotBlank(message = "Title cannot be blank")
-    @Size(min = 1, max = 50, message = "Title must be 1-50 characters")
+    @Size(max = 50, message = "Title must be 1-50 characters")
     String title,
 
     @NotNull(message = "Duration is required")

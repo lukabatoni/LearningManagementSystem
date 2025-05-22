@@ -51,8 +51,8 @@ public class StudentController {
       summary = "Update a student",
       description = "Updates the details of an existing student"
   )
-  @PutMapping
-  public ResponseEntity<StudentResponseDto> updateStudent(UUID id,
+  @PutMapping("/{id}")
+  public ResponseEntity<StudentResponseDto> updateStudent(@PathVariable UUID id,
                                                           @RequestBody @Valid StudentRequestDto requestDto) {
     StudentResponseDto response = studentService.updateStudent(id, requestDto);
     return ResponseEntity.ok(response);
@@ -62,8 +62,8 @@ public class StudentController {
       summary = "Delete a student",
       description = "Deletes a student by ID"
   )
-  @DeleteMapping
-  public ResponseEntity<Void> deleteStudent(UUID id) {
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteStudent(@PathVariable UUID id) {
     studentService.deleteStudent(id);
     return ResponseEntity.noContent().build();
   }

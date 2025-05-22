@@ -36,7 +36,8 @@ public class GlobalExceptionHandler {
             FieldError::getField,
             fieldError -> fieldError.getDefaultMessage() != null
                 ? fieldError.getDefaultMessage()
-                : INVALID_VALUE
+                : INVALID_VALUE,
+            (msg1, msg2) -> msg1 + "; " + msg2 // merge messages for same field
         ));
 
     ErrorResponse errorResponse = new ErrorResponse(
@@ -58,7 +59,8 @@ public class GlobalExceptionHandler {
             FieldError::getField,
             fieldError -> fieldError.getDefaultMessage() != null
                 ? fieldError.getDefaultMessage()
-                : INVALID_VALUE
+                : INVALID_VALUE,
+            (msg1, msg2) -> msg1 + "; " + msg2 // merge messages for same field
         ));
 
     return ResponseEntity.badRequest()

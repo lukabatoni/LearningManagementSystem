@@ -10,6 +10,7 @@ import com.example.lms.lesson.model.Lesson;
 import com.example.lms.lesson.repository.LessonRepository;
 import java.util.List;
 import java.util.UUID;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class LessonService {
   private static final String COURSE_NOT_FOUND = "Course not found with id: ";
 
   @Transactional
-  public LessonResponseDto createLesson(LessonRequestDto requestDto) {
+  public LessonResponseDto createLesson(@NonNull final LessonRequestDto requestDto) {
     Course course = courseRepository.findById(requestDto.courseId())
         .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + requestDto.courseId()));
 
@@ -44,7 +45,8 @@ public class LessonService {
   }
 
   @Transactional
-  public LessonResponseDto updateLesson(UUID id, LessonRequestDto requestDto) {
+  public LessonResponseDto updateLesson(@NonNull final UUID id,
+                                        @NonNull final LessonRequestDto requestDto) {
     Lesson lesson = lessonRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(LESSON_NOT_FOUND + id));
 
@@ -60,7 +62,7 @@ public class LessonService {
   }
 
   @Transactional
-  public void deleteLesson(UUID id) {
+  public void deleteLesson(@NonNull final UUID id) {
     Lesson lesson = lessonRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(LESSON_NOT_FOUND + id));
     lessonRepository.delete(lesson);
