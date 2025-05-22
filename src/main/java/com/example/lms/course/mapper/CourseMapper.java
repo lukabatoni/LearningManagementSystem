@@ -16,6 +16,8 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
+  @Mapping(target = "students", ignore = true)
+  @Mapping(target = "lessons", ignore = true)
   Course toEntity(CourseRequestDto dto);
 
   @Mapping(target = "settings", source = "settings", qualifiedByName = "toSettingsResponseDto")
