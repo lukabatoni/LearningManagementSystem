@@ -68,7 +68,7 @@ public class StudentService {
   @Transactional
   public void buyCourseWithCoins(@NonNull final UUID studentId,
                                  @NonNull final UUID courseId) {
-    Student student = studentRepository.findById(studentId)
+    Student student = studentRepository.findByIdForUpdate(studentId)
         .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND + studentId));
 
     Course course = courseRepository.findById(courseId)
