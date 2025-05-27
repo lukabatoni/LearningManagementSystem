@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: admin
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(1024)
+              - column:
+                  name: price
+                  type: DECIMAL(19,2)
+              - column:
+                  name: coins_paid
+                  type: DECIMAL(19,2)
+              - column:
+                  name: settings_id
+                  type: UUID
+        - addForeignKeyConstraint:
+            baseTableName: courses
+            baseColumnNames: settings_id
+            referencedTableName: course_settings
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_courses_settings
