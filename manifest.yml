@@ -1,0 +1,12 @@
+---
+applications:
+  - name: lms
+    random-route: true
+    path: ./target/lms-0.0.1.jar
+    memory: 1024M
+    buildpacks:
+      - sap_java_buildpack_jakarta
+    env:
+      TARGET_RUNTIME: tomcat
+      JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jdk.SAPMachineJDK']"
+      JBP_CONFIG_SAP_MACHINE_JDK : "{ version: 21.+ }"
