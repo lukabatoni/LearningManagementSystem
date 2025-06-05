@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: "lms"
+  datasource:
+    url: ${vcap.services.lms-hdi.credentials.url}
+    username: ${vcap.services.lms-hdi.credentials.user}
+    password: ${vcap.services.lms-hdi.credentials.password}
+    driver-class-name: com.sap.db.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      ddl-auto: none
+      dialect: org.hibernate.dialect.HANAColumnStoreDialect
+      hibernate:
+        default_schema: ${vcap.services.lms-hdi.credentials.user}
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+mailtrap:
+  inbox-id: 3713999
+  token: bd8414f579199eda58f71a2eb166114a
+  sandbox: true
+  from-mail: example@leverx.com
+  from-name: LeverX

@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: UUID
+                  type: VARBINARY(16)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -20,7 +20,7 @@ databaseChangeLog:
                   type: INT
               - column:
                   name: course_id
-                  type: UUID
+                  type: VARBINARY(16)
         - addForeignKeyConstraint:
             baseTableName: lessons
             baseColumnNames: course_id
