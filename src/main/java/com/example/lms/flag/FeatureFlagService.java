@@ -2,17 +2,19 @@ package com.example.lms.flag;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
 public class FeatureFlagService {
   private final FeatureFlagProperties flagProperties;
+  private final RestTemplate restTemplate;
 
   public boolean isFlagActive(String featureName) {
     String evaluateUrlFormat = "%s/api/v1/evaluate/%s";
@@ -21,14 +23,15 @@ public class FeatureFlagService {
         (flagProperties.getUsername() + ":" + flagProperties.getPassword()).getBytes()
     );
 
-    try {
-      HttpClient httpClient = HttpClientBuilder.create().build();
-      HttpUriRequest evaluateRequest = new HttpGet(evaluationUri);
-      evaluateRequest.addHeader("Authorization", "Basic " + credentials);
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Basic " + credentials);
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-      HttpResponse response = httpClient.execute(evaluateRequest);
-      int statusCode = response.getStatusLine().getStatusCode();
-      return statusCode == 200;
+    try {
+      ResponseEntity<String> response = restTemplate.exchange(
+          evaluationUri, HttpMethod.GET, entity, String.class
+      );
+      return response.getStatusCode() == HttpStatus.OK;
     } catch (Exception e) {
       return false;
     }
