@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,7 @@ public class StudentService {
     return studentMapper.toResponseDto(savedStudent);
   }
 
+  @Cacheable(value = "students")
   public List<StudentResponseDto> getAllStudents() {
     List<Student> students = studentRepository.findAll();
     return students.stream()
