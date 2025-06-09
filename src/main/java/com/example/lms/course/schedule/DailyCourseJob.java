@@ -3,7 +3,7 @@ package com.example.lms.course.schedule;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
 import com.example.lms.mail.EmailDetails;
-import com.example.lms.mail.EmailServiceImpl;
+import com.example.lms.mail.EmailService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DailyCourseJob {
   private final CourseRepository courseRepository;
-  private final EmailServiceImpl emailService;
+  private final EmailService emailService;
 
   private static final String COURSE_REMINDER_SUBJECT = "Course Reminder";
   private static final String COURSE_REMINDER_MESSAGE = "Your course starts tomorrow!";

@@ -27,3 +27,9 @@ info:
   app:
     name: Course Management API
     version: 1.0.0
+mailtrap:
+  inbox-id: 3713999
+  token: bd8414f579199eda58f71a2eb166114a
+  sandbox: true
+  from-mail: example@leverx.com
+  from-name: LeverX

@@ -4,11 +4,13 @@ import com.example.lms.smtp.SmtpCredentialProvider;
 import com.example.lms.smtp.SmtpCredentialRouter;
 import java.util.Properties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("cloud")
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
   private final SmtpCredentialRouter credentialRouter;
