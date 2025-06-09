@@ -4,9 +4,11 @@ applications:
     random-route: true
     path: ./target/lms-0.0.1.jar
     memory: 1024M
+    enable-ssh: true
     buildpacks:
       - sap_java_buildpack_jakarta
     env:
+      JAVA_OPTS: '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'
       SPRING_PROFILES_ACTIVE: cloud
       TARGET_RUNTIME: tomcat
       JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jdk.SAPMachineJDK']"
@@ -14,3 +16,6 @@ applications:
     services:
       - lms-logger
       - lms-hdi
+      - lms-flag
+      - mail-dest-instance
+      - lms-ups
