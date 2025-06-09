@@ -15,9 +15,14 @@ spring:
         default_schema: ${vcap.services.lms-hdi.credentials.user}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-mailtrap:
-  inbox-id: 3713999
-  token: bd8414f579199eda58f71a2eb166114a
-  sandbox: true
-  from-mail: example@leverx.com
-  from-name: LeverX
+    drop-first: true
+
+smtp-ups:
+  host: ${vcap.services.lms-ups.credentials.host}
+  port: ${vcap.services.lms-ups.credentials.port}
+  username: ${vcap.services.lms-ups.credentials.mail}
+  password: ${vcap.services.lms-ups.credentials.password}
+feature-flag:
+  uri: ${vcap.services.lms-flag.credentials.uri}
+  username: ${vcap.services.lms-flag.credentials.username}
+  password: ${vcap.services.lms-flag.credentials.password}
