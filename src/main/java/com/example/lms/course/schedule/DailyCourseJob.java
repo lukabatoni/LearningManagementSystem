@@ -2,7 +2,8 @@ package com.example.lms.course.schedule;
 
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
-import com.example.lms.mail.MailtrapEmailService;
+import com.example.lms.mail.EmailDetails;
+import com.example.lms.mail.EmailServiceImpl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DailyCourseJob {
   private final CourseRepository courseRepository;
-  private final MailtrapEmailService mailtrapEmailService;
+  private final EmailServiceImpl emailService;
 
   private static final String COURSE_REMINDER_SUBJECT = "Course Reminder";
   private static final String COURSE_REMINDER_MESSAGE = "Your course starts tomorrow!";
@@ -31,12 +32,16 @@ public class DailyCourseJob {
         .findByStartDateBetween(startOfDay, endOfDay);
     log.info("Found {} courses starting tomorrow", courses.size());
 
-    List<String> emails = courseRepository
-        .findStudentEmailsForCoursesStartingBetween(startOfDay, endOfDay);
-    log.info("Found {} students enrolled in courses starting tomorrow", emails.size());
+    String[] emails = courseRepository
+        .findStudentEmailsForCoursesStartingBetween(startOfDay, endOfDay)
+        .toArray(new String[courses.size()]);
 
-    for (String email : emails) {
-      mailtrapEmailService.send(email, COURSE_REMINDER_SUBJECT, COURSE_REMINDER_MESSAGE);
-    }
+    EmailDetails sendData = EmailDetails.builder()
+        .recipient(emails)
+        .msgBody(COURSE_REMINDER_MESSAGE)
+        .subject(COURSE_REMINDER_SUBJECT)
+        .build();
+    log.info("Sending course reminder emails to {} students", emails.length);
+    emailService.sendEmail(sendData);
   }
 }
