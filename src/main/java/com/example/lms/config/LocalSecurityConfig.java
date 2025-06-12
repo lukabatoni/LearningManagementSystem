@@ -48,6 +48,7 @@ public class LocalSecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/actuator/**").hasRole(MANAGER_ROLE)
             .anyRequest().authenticated()
         )
         .httpBasic(Customizer.withDefaults())
