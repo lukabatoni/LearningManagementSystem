@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class CourseService {
   }
 
   //@Transactional - needed when OIVS is disabled
+  @Cacheable(value = "courses")
   public List<CourseResponseDto> getAllCourses() {
     List<Course> courses = courseRepository.findAll();
     return courses.stream()

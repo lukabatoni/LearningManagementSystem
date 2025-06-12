@@ -161,7 +161,7 @@ public class StudentServiceTest {
     student.setCourses(new HashSet<>());
     course.setStudents(new HashSet<>());
 
-    when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+    when(studentRepository.findByIdForUpdate(studentId)).thenReturn(Optional.of(student));
     when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
     studentService.buyCourseWithCoins(studentId, courseId);
@@ -205,7 +205,7 @@ public class StudentServiceTest {
     Course course = new Course();
     course.setPrice(new BigDecimal("50"));
 
-    when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+    when(studentRepository.findByIdForUpdate(studentId)).thenReturn(Optional.of(student));
     when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
 
     assertThrows(CoinsNotEnoughException.class,

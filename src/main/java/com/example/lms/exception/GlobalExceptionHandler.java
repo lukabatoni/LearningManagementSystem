@@ -83,4 +83,25 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(MissingSmtpPropertyException.class)
+  public ResponseEntity<ErrorResponse> handleMissingSmtpHostException(MissingSmtpPropertyException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        ex.getMessage(),
+        System.currentTimeMillis(),
+        Map.of()
+    );
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(FeatureFlagEvaluationException.class)
+  public ResponseEntity<ErrorResponse> handleFeatureFlagEvaluationException(FeatureFlagEvaluationException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(
+        HttpStatus.SERVICE_UNAVAILABLE.value(),
+        ex.getMessage(),
+        System.currentTimeMillis(),
+        Map.of()
+    );
+    return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
+  }
 }

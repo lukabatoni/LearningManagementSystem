@@ -6,10 +6,12 @@ import io.mailtrap.factory.MailtrapClientFactory;
 import io.mailtrap.model.request.emails.Address;
 import io.mailtrap.model.request.emails.MailtrapMail;
 import java.util.List;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MailtrapEmailService {
+@Profile("local")
+public class MailtrapEmailService implements EmailService {
 
   private final MailtrapClient client;
   private final MailtrapProperties properties;
@@ -24,18 +26,28 @@ public class MailtrapEmailService {
     this.client = MailtrapClientFactory.createMailtrapClient(config);
   }
 
-  public void send(String to, String subject, String text) {
-    MailtrapMail mail = MailtrapMail.builder()
-        .from(new Address(properties.getFromMail(), properties.getFromName()))
-        .to(List.of(new Address(to)))
-        .subject(subject)
-        .text(text)
-        .category("Notification")
-        .build();
-    try {
-      client.send(mail);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to send email", e);
+  @Override
+  public void sendEmail(EmailDetails details) {
+    String[] recipients = details.getRecipient();
+    if (recipients == null) {
+      return;
+    }
+    for (String to : recipients) {
+      if (to == null || to.trim().isEmpty()) {
+        continue;
+      }
+      MailtrapMail mail = MailtrapMail.builder()
+          .from(new Address(properties.getFromMail(), properties.getFromName()))
+          .to(List.of(new Address(to)))
+          .subject(details.getSubject())
+          .text(details.getMsgBody())
+          .category("Notification")
+          .build();
+      try {
+        client.send(mail);
+      } catch (Exception e) {
+        throw new RuntimeException("Failed to send email", e);
+      }
     }
   }
 }
