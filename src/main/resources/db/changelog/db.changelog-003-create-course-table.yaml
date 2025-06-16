@@ -1,7 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: 3
+      id: 3-hana
       author: admin
+      context: hana
       changes:
         - createTable:
             tableName: courses
@@ -27,6 +28,43 @@ databaseChangeLog:
               - column:
                   name: settings_id
                   type: VARBINARY(16)
+        - addForeignKeyConstraint:
+            baseTableName: courses
+            baseColumnNames: settings_id
+            referencedTableName: course_settings
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_courses_settings
+
+  - changeSet:
+      id: 3-postgres
+      author: admin
+      context: postgres
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(1024)
+              - column:
+                  name: price
+                  type: DECIMAL(19,2)
+              - column:
+                  name: coins_paid
+                  type: DECIMAL(19,2)
+              - column:
+                  name: settings_id
+                  type: UUID
         - addForeignKeyConstraint:
             baseTableName: courses
             baseColumnNames: settings_id
