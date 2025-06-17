@@ -114,6 +114,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.sap.cloud.security.xsuaa</groupId>
+      <artifactId>xsuaa-spring-boot-starter</artifactId>
+      <version>3.5.0</version>
+    </dependency>
   </dependencies>
 
   <build>
