@@ -17,6 +17,14 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     drop-first: true
     contexts: hana
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers
+  endpoint:
+    health:
+      show-details: always
 
 smtp-ups:
   host: ${vcap.services.lms-ups.credentials.host}
