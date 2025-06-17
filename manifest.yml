@@ -19,3 +19,19 @@ applications:
       - lms-flag
       - mail-dest-instance
       - lms-ups
+      - javauaa-lms
+  - name: web
+    random-route: true
+    path: web
+    memory: 1024M
+    env:
+      destinations: >
+        [
+          {
+            "name":"lms",
+            "url":"https://lms-excellent-cat-ml.cfapps.us10-001.hana.ondemand.com",
+            "forwardAuthToken": true
+          }
+        ]
+    services:
+      - javauaa-lms
