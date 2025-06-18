@@ -32,4 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### for approuter
 node_modules/
+
+### after mta ###
+mta_archives/
+Makefile_*.mta
