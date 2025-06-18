@@ -15,7 +15,6 @@ spring:
         default_schema: ${vcap.services.lms-hdi.credentials.user}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-    drop-first: true
     contexts: hana
 management:
   endpoints:
