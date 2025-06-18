@@ -1,9 +1,8 @@
 package com.example.lms.config;
 
-import com.example.lms.enums.Role;
+import static com.example.lms.config.UserConfig.MANAGER_ROLE;
 import com.sap.cloud.security.xsuaa.XsuaaServiceConfiguration;
 import com.sap.cloud.security.xsuaa.token.TokenAuthenticationConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,23 +13,18 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @Profile("cloud")
 public class CloudSecurityConfig {
 
-  public static final String MANAGER_ROLE = Role.MANAGER.name();
+  private final XsuaaServiceConfiguration xsuaaServiceConfiguration;
 
-  @Autowired
-  XsuaaServiceConfiguration xsuaaServiceConfiguration;
+  public CloudSecurityConfig(XsuaaServiceConfiguration xsuaaServiceConfiguration) {
+    this.xsuaaServiceConfiguration = xsuaaServiceConfiguration;
+  }
 
   @Bean
   @Order(1)
@@ -47,26 +41,11 @@ public class CloudSecurityConfig {
   }
 
   @Bean
-  public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-    UserDetails manager = User.builder()
-        .username("manager")
-        .password(encoder.encode("password"))
-        .roles(MANAGER_ROLE)
-        .build();
-
-    return new InMemoryUserDetailsManager(manager);
-  }
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
   @Order(2)
   public SecurityFilterChain xsuaaSecurityFilterChain(HttpSecurity http) throws Exception {
     http
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .anyRequest().authenticated()
         )
