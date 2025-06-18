@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class LessonService {
   private static final String COURSE_NOT_FOUND = "Course not found with id: ";
 
   @Transactional
+  @CacheEvict(value = "lessons", allEntries = true)
   public LessonResponseDto createLesson(@NonNull final LessonRequestDto requestDto) {
     Course course = courseRepository.findById(requestDto.courseId())
         .orElseThrow(() -> new ResourceNotFoundException(COURSE_NOT_FOUND + requestDto.courseId()));

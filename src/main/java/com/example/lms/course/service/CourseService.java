@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class CourseService {
   private static final String COURSE_NOT_FOUND = "Course not found with id: ";
 
   @Transactional
+  @CacheEvict(value = "courses", allEntries = true)
   public CourseResponseDto createCourse(@NonNull final CourseRequestDto courseRequestDto) {
     Course course = courseMapper.toEntity(courseRequestDto);
     Course savedCourse = courseRepository.save(course);

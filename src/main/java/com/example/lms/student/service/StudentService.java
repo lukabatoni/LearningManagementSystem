@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class StudentService {
 
 
   @Transactional
+  @CacheEvict(value = "students", allEntries = true)
   public StudentResponseDto createStudent(@NonNull final StudentRequestDto requestDto) {
     Student student = studentMapper.toEntity(requestDto);
     Student savedStudent = studentRepository.save(student);
