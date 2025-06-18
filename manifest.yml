@@ -20,7 +20,7 @@ applications:
       - mail-dest-instance
       - lms-ups
       - javauaa-lms
-  - name: web
+  - name: web-lms
     random-route: true
     path: web
     memory: 1024M
