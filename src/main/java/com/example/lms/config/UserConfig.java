@@ -20,13 +20,13 @@ public class UserConfig {
   public UserDetailsService userDetailsService(PasswordEncoder encoder) {
     UserDetails user = User.builder()
         .username("user")
-        .password(encoder.encode("userPassword"))
+        .password(encoder.encode("password"))
         .roles(USER_ROLE)
         .build();
 
     UserDetails manager = User.builder()
         .username("manager")
-        .password(encoder.encode("managerPassword"))
+        .password(encoder.encode("password"))
         .roles(MANAGER_ROLE)
         .build();
 
