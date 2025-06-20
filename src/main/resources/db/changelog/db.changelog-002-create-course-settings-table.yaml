@@ -1,7 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: 2
+      id: 2-hana
       author: admin
+      context: hana
       changes:
         - createTable:
             tableName: course_settings
@@ -9,6 +10,30 @@ databaseChangeLog:
               - column:
                   name: id
                   type: VARBINARY(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: TIMESTAMP
+              - column:
+                  name: end_date
+                  type: TIMESTAMP
+              - column:
+                  name: is_public
+                  type: BOOLEAN
+
+  - changeSet:
+      id: 2-postgres
+      author: admin
+      context: postgres
+      changes:
+        - createTable:
+            tableName: course_settings
+            columns:
+              - column:
+                  name: id
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false

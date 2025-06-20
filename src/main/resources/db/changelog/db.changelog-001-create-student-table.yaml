@@ -1,7 +1,8 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 1-hana
       author: admin
+      context: hana
       changes:
         - createTable:
             tableName: students
@@ -9,6 +10,36 @@ databaseChangeLog:
               - column:
                   name: id
                   type: VARBINARY(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: date_of_birth
+                  type: DATE
+              - column:
+                  name: coins
+                  type: DECIMAL(19,2)
+
+  - changeSet:
+      id: 1-postgres
+      author: admin
+      context: postgres
+      changes:
+        - createTable:
+            tableName: students
+            columns:
+              - column:
+                  name: id
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false

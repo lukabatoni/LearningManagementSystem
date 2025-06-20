@@ -1,0 +1,82 @@
+_schema-version: "3.1"
+ID: lms
+version: 1.0.0
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  - name: lms
+    type: java
+    path: .
+    build-parameters:
+      builder: custom
+      commands:
+        - mvn clean package -DskipTests
+      build-result: target/lms-0.0.1.jar
+    parameters:
+      memory: 1024M
+      buildpack: sap_java_buildpack_jakarta
+      enable-ssh: true
+      routes:
+        - route: lms-excellent-cat-ml.cfapps.us10-001.hana.ondemand.com
+    properties:
+      SPRING_PROFILES_ACTIVE: cloud
+      TARGET_RUNTIME: tomcat
+      JAVA_OPTS: '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'
+      JBP_CONFIG_COMPONENTS: '{jres: ["com.sap.xs.java.buildpack.jdk.SAPMachineJDK"]}'
+      JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
+    requires:
+      - name: lms-logger
+      - name: lms-hdi
+      - name: lms-flag
+      - name: mail-dest-instance
+      - name: lms-ups
+      - name: javauaa-lms
+
+  - name: web-lms
+    type: nodejs
+    path: web
+    parameters:
+      memory: 1024M
+    properties:
+      destinations: >
+        [
+          {
+            "name": "lms",
+            "url": "https://lms-excellent-cat-ml.cfapps.us10-001.hana.ondemand.com",
+            "forwardAuthToken": true
+          }
+        ]
+    requires:
+      - name: javauaa-lms
+
+resources:
+  - name: lms-hdi
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: lms-hdi
+
+  - name: javauaa-lms
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: javauaa-lms
+
+  - name: lms-logger
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: lms-logger
+
+  - name: lms-flag
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: lms-flag
+
+  - name: mail-dest-instance
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: mail-dest-instance
+
+  - name: lms-ups
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: lms-ups

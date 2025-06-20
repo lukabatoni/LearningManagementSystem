@@ -1,0 +1,9 @@
+{
+  "routes": [
+    {
+      "source": "^/lms/(.*)$",
+      "target": "$1",
+      "destination": "lms"
+    }
+  ]
+}
