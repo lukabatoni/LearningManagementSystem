@@ -3,6 +3,7 @@ package com.example.lms.config;
 import static com.example.lms.config.UserConfig.MANAGER_ROLE;
 import com.sap.cloud.security.xsuaa.XsuaaServiceConfiguration;
 import com.sap.cloud.security.xsuaa.token.TokenAuthenticationConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,13 +19,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @Profile("cloud")
+@RequiredArgsConstructor
 public class CloudSecurityConfig {
 
   private final XsuaaServiceConfiguration xsuaaServiceConfiguration;
-
-  public CloudSecurityConfig(XsuaaServiceConfiguration xsuaaServiceConfiguration) {
-    this.xsuaaServiceConfiguration = xsuaaServiceConfiguration;
-  }
 
   @Bean
   @Order(1)
