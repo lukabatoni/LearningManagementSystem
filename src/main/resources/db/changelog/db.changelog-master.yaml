@@ -9,3 +9,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-004-create-lesson-table.yaml
   - include:
       file: db/changelog/db.changelog-005-create-course-student-table.yaml
+  - include:
+      file: db/changelog/db.changelog-006-create-lesson-inheritance-tables.yaml
