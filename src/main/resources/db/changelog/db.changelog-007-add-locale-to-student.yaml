@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7-hana
+      author: admin
+      context: hana
+      changes:
+        - addColumn:
+            tableName: students
+            columns:
+              - column:
+                  name: locale
+                  type: VARCHAR(10)
+
+  - changeSet:
+      id: 7-postgres
+      author: admin
+      context: postgres
+      changes:
+        - addColumn:
+            tableName: students
+            columns:
+              - column:
+                  name: locale
+                  type: VARCHAR(10)
