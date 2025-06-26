@@ -13,3 +13,11 @@ databaseChangeLog:
       file: db/changelog/db.changelog-006-create-lesson-inheritance-tables.yaml
   - include:
       file: db/changelog/db.changelog-007-add-locale-to-student.yaml
+  - include:
+      file: db/changelog/db.changelog-008-add-audit-fields-students.yaml
+  - include:
+      file: db/changelog/db.changelog-009-add-audit-fields-courses.yaml
+  - include:
+      file: db/changelog/db.changelog-010-add-audit-fields-lessons.yaml
+  - include:
+      file: db/changelog/db.changelog-011-add-audit-fields-course-settings.yaml

@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8-hana
+      author: admin
+      context: hana
+      changes:
+        - addColumn:
+            tableName: students
+            columns:
+              - column:
+                  name: created
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_changed
+                  type: TIMESTAMP
+              - column:
+                  name: last_changed_by
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: 8-postgres
+      author: admin
+      context: postgres
+      changes:
+        - addColumn:
+            tableName: students
+            columns:
+              - column:
+                  name: created
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: last_changed
+                  type: TIMESTAMP
+              - column:
+                  name: last_changed_by
+                  type: VARCHAR(255)
