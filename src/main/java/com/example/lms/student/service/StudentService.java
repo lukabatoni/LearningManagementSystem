@@ -58,6 +58,7 @@ public class StudentService {
     student.setEmail(requestDto.email());
     student.setDateOfBirth(requestDto.dateOfBirth());
     student.setCoins(requestDto.coins());
+    student.setLocale(requestDto.locale());
     Student updatedStudent = studentRepository.save(student);
     return studentMapper.toResponseDto(updatedStudent);
   }
