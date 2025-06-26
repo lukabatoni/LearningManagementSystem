@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.lms.course.model.Course;
 import com.example.lms.course.model.CourseSettings;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.enums.LocaleCode;
 import com.example.lms.student.dto.StudentRequestDto;
 import com.example.lms.student.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,7 +69,8 @@ public class StudentControllerIntegrationTest {
         "Doe",
         "john.doe@example.com",
         LocalDate.of(2000, 1, 1),
-        BigDecimal.valueOf(100)
+        BigDecimal.valueOf(100),
+        LocaleCode.EN
     );
   }
 
@@ -94,7 +96,8 @@ public class StudentControllerIntegrationTest {
         "",
         "invalid-email",
         LocalDate.now().plusDays(1),
-        BigDecimal.valueOf(-10)
+        BigDecimal.valueOf(-10),
+        LocaleCode.EN
     );
 
     mockMvc.perform(post("/api/v1/students")
@@ -144,7 +147,8 @@ public class StudentControllerIntegrationTest {
         "Smith",
         "jane.smith@example.com",
         LocalDate.of(1995, 5, 5),
-        BigDecimal.valueOf(50)
+        BigDecimal.valueOf(50),
+        LocaleCode.EN
     );
 
     mockMvc.perform(put("/api/v1/students/{id}", studentId)
@@ -183,7 +187,8 @@ public class StudentControllerIntegrationTest {
         "",
         "bad-email",
         LocalDate.now().plusDays(1),
-        BigDecimal.valueOf(-1)
+        BigDecimal.valueOf(-1),
+        LocaleCode.EN
     );
 
     mockMvc.perform(put("/api/v1/students/{id}", studentId)

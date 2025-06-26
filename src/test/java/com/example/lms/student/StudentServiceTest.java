@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.enums.LocaleCode;
 import com.example.lms.exception.CoinsNotEnoughException;
 import com.example.lms.exception.ResourceNotFoundException;
 import com.example.lms.student.dto.StudentRequestDto;
@@ -44,7 +45,7 @@ public class StudentServiceTest {
   void createStudent_shouldSaveAndReturnDto() {
     StudentRequestDto requestDto = new StudentRequestDto(
         "John", "Doe", "john.doe@example.com",
-        LocalDate.of(2000, 1, 1), BigDecimal.TEN
+        LocalDate.of(2000, 1, 1), BigDecimal.TEN, LocaleCode.EN
     );
     Student student = new Student();
     Student savedStudent = new Student();
@@ -92,7 +93,7 @@ public class StudentServiceTest {
     UUID id = UUID.randomUUID();
     StudentRequestDto requestDto = new StudentRequestDto(
         "John", "Doe", "john.doe@example.com",
-        LocalDate.of(1999, 5, 5), BigDecimal.valueOf(50)
+        LocalDate.of(1999, 5, 5), BigDecimal.valueOf(50), LocaleCode.EN
     );
     Student existingStudent = new Student();
     Student updatedStudent = new Student();
@@ -121,7 +122,7 @@ public class StudentServiceTest {
   void updateStudent_shouldThrowIfNotFound() {
     UUID id = UUID.randomUUID();
     StudentRequestDto requestDto = new StudentRequestDto("A", "B",
-        "a@b.com", null, BigDecimal.ONE);
+        "a@b.com", null, BigDecimal.ONE, LocaleCode.EN);
     when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> studentService.updateStudent(id, requestDto));
