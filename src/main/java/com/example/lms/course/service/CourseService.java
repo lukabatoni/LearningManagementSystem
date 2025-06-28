@@ -6,12 +6,15 @@ import com.example.lms.course.mapper.CourseMapper;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
 import com.example.lms.exception.ResourceNotFoundException;
-import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +36,11 @@ public class CourseService {
 
   //@Transactional - needed when OIVS is disabled
   @Cacheable(value = "courses")
-  public List<CourseResponseDto> getAllCourses() {
-    List<Course> courses = courseRepository.findAll();
-    return courses.stream()
-        .map(courseMapper::toResponseDto)
-        .toList();
+  public Page<CourseResponseDto> getAllCourses(int page, int pageSize, String sortBy, String direction) {
+    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    Pageable pageable = PageRequest.of(page, pageSize, sort);
+    Page<Course> coursePage = courseRepository.findAll(pageable);
+    return coursePage.map(courseMapper::toResponseDto);
   }
 
   @Transactional
