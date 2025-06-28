@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Pageable;
 
 public class StudentServiceTest {
   private StudentRepository studentRepository;
@@ -76,14 +77,18 @@ public class StudentServiceTest {
         "C", "D", "c@d.com", null, BigDecimal.TEN, Set.of());
 
     List<Student> students = List.of(student1, student2);
-    when(studentRepository.findAll()).thenReturn(students);
+    Pageable pageable = org.springframework.data.domain.PageRequest
+        .of(0, 10, org.springframework.data.domain.Sort.by("created").descending());
+    org.springframework.data.domain.Page<Student> page = new org.springframework.data.domain.PageImpl<>(students);
+
+    when(studentRepository.findAll(pageable)).thenReturn(page);
     when(studentMapper.toResponseDto(student1)).thenReturn(dto1);
     when(studentMapper.toResponseDto(student2)).thenReturn(dto2);
 
-    List<StudentResponseDto> result = studentService.getAllStudents();
+    List<StudentResponseDto> result = studentService.getAllStudents(0, 10, "created", "desc");
 
     assertEquals(List.of(dto1, dto2), result);
-    verify(studentRepository).findAll();
+    verify(studentRepository).findAll(pageable);
     verify(studentMapper).toResponseDto(student1);
     verify(studentMapper).toResponseDto(student2);
   }
