@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -42,8 +43,13 @@ public class StudentController {
       description = "Retrieves a list of all students"
   )
   @GetMapping
-  public ResponseEntity<List<StudentResponseDto>> getAllStudents() {
-    List<StudentResponseDto> students = studentService.getAllStudents();
+  public ResponseEntity<List<StudentResponseDto>> getAllStudents(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "2") int pageSize,
+      @RequestParam(defaultValue = "created") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction) {
+
+    List<StudentResponseDto> students = studentService.getAllStudents(page, pageSize, sortBy, direction);
     return ResponseEntity.ok(students);
   }
 
