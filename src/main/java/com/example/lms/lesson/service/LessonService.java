@@ -44,7 +44,12 @@ public class LessonService {
   }
 
   @Cacheable(value = "lessons")
-  public Page<LessonResponseDto> getAllLessons(int page, int pageSize, String sortBy, String direction) {
+  public Page<LessonResponseDto> getAllLessons(
+      final int page,
+      final int pageSize,
+      @NonNull final String sortBy,
+      @NonNull final String direction
+  ) {
     Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
     Pageable pageable = PageRequest.of(page, pageSize, sort);
     Page<Lesson> lessonPage = lessonRepository.findAll(pageable);
