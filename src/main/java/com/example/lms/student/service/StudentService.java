@@ -41,7 +41,12 @@ public class StudentService {
     return studentMapper.toResponseDto(savedStudent);
   }
 
-  public List<StudentResponseDto> getAllStudents(int page, int pageSize, String sortBy, String direction) {
+  public List<StudentResponseDto> getAllStudents(
+      final int page,
+      final int pageSize,
+      @NonNull final String sortBy,
+      @NonNull final String direction
+  ) {
     Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
     Pageable pageable = PageRequest.of(page, pageSize, sort);
     return studentRepository.findAll(pageable).stream()
