@@ -1,4 +1,4 @@
-package com.example.lms.lesson;
+package com.example.lms.integration.lesson;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+@ActiveProfiles("local")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class LessonControllerIntegrationTest {
@@ -39,6 +41,12 @@ public class LessonControllerIntegrationTest {
   private CourseRepository courseRepository;
 
   private UUID courseId;
+
+  private String basicAuthHeader() {
+    String plainCreds = "user:password";
+    byte[] base64CredsBytes = java.util.Base64.getEncoder().encode(plainCreds.getBytes());
+    return "Basic " + new String(base64CredsBytes);
+  }
 
   @BeforeEach
   void setUp() {
@@ -71,6 +79,7 @@ public class LessonControllerIntegrationTest {
     var request = validLessonRequest();
 
     mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
@@ -89,6 +98,7 @@ public class LessonControllerIntegrationTest {
     );
 
     mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidRequest)))
         .andExpect(status().isBadRequest())
@@ -100,29 +110,33 @@ public class LessonControllerIntegrationTest {
 
   @Test
   void getAllLessons_shouldReturnEmptyListInitially() throws Exception {
-    mockMvc.perform(get("/api/v1/lessons"))
+    mockMvc.perform(get("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(0)));
+        .andExpect(jsonPath("$.content", hasSize(0)));
   }
 
   @Test
   void getAllLessons_shouldReturnListOfLessons() throws Exception {
     var request = validLessonRequest();
     mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(get("/api/v1/lessons"))
+    mockMvc.perform(get("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].title").value("Lesson 1"));
+        .andExpect(jsonPath("$.content", hasSize(1)))
+        .andExpect(jsonPath("$.content[0].title").value("Lesson 1"));
   }
 
   @Test
   void updateLesson_shouldUpdateAndReturnLesson() throws Exception {
     var request = validLessonRequest();
     String response = mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
@@ -135,6 +149,7 @@ public class LessonControllerIntegrationTest {
     );
 
     mockMvc.perform(put("/api/v1/lessons/{id}", lessonId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
@@ -149,6 +164,7 @@ public class LessonControllerIntegrationTest {
     var updateRequest = validLessonRequest();
 
     mockMvc.perform(put("/api/v1/lessons/{id}", randomId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isNotFound())
@@ -159,6 +175,7 @@ public class LessonControllerIntegrationTest {
   void updateLesson_shouldReturnBadRequestOnInvalidData() throws Exception {
     var request = validLessonRequest();
     String response = mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
@@ -171,6 +188,7 @@ public class LessonControllerIntegrationTest {
     );
 
     mockMvc.perform(put("/api/v1/lessons/{id}", lessonId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidUpdate)))
         .andExpect(status().isBadRequest())
@@ -184,23 +202,27 @@ public class LessonControllerIntegrationTest {
   void deleteLesson_shouldDeleteAndReturnNoContent() throws Exception {
     var request = validLessonRequest();
     String response = mockMvc.perform(post("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
     UUID lessonId = UUID.fromString(objectMapper.readTree(response).get("id").asText());
 
-    mockMvc.perform(delete("/api/v1/lessons/{id}", lessonId))
+    mockMvc.perform(delete("/api/v1/lessons/{id}", lessonId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/api/v1/lessons"))
+    mockMvc.perform(get("/api/v1/lessons")
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(0)));
+        .andExpect(jsonPath("$.content", hasSize(0)));
   }
 
   @Test
   void deleteLesson_shouldReturnNotFoundForInvalidId() throws Exception {
     UUID randomId = UUID.randomUUID();
-    mockMvc.perform(delete("/api/v1/lessons/{id}", randomId))
+    mockMvc.perform(delete("/api/v1/lessons/{id}", randomId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message", containsString("Lesson not found")));
   }
