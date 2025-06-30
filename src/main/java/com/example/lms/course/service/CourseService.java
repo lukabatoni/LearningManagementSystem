@@ -40,7 +40,8 @@ public class CourseService {
       final int page,
       final int pageSize,
       @NonNull final String sortBy,
-      @NonNull final String direction) {
+      @NonNull final String direction
+  ) {
     Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
     Pageable pageable = PageRequest.of(page, pageSize, sort);
     Page<Course> coursePage = courseRepository.findAll(pageable);
