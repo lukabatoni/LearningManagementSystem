@@ -1,0 +1,9 @@
+_schema-version: "3.1"
+ID: lms-override-web-url
+extends: lms
+
+modules:
+  - name: web-lms
+    parameters:
+      routes:
+        - route: web-luka.cfapps.us10-001.hana.ondemand.com
