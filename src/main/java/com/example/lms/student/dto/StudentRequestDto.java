@@ -1,5 +1,6 @@
 package com.example.lms.student.dto;
 
+import com.example.lms.enums.LocaleCode;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +29,10 @@ public record StudentRequestDto(
 
     @NotNull(message = "Coins balance is required")
     @DecimalMin(value = "0.0", message = "Coins cannot be negative")
-    BigDecimal coins
+    BigDecimal coins,
+
+    @NotNull(message = "Locale is required")
+    LocaleCode locale
+
 ) {
 }

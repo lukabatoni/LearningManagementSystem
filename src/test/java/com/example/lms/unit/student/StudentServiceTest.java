@@ -1,4 +1,4 @@
-package com.example.lms.student;
+package com.example.lms.unit.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import com.example.lms.course.model.Course;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.enums.LocaleCode;
 import com.example.lms.exception.CoinsNotEnoughException;
 import com.example.lms.exception.ResourceNotFoundException;
 import com.example.lms.student.dto.StudentRequestDto;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Pageable;
 
 public class StudentServiceTest {
   private StudentRepository studentRepository;
@@ -44,7 +46,7 @@ public class StudentServiceTest {
   void createStudent_shouldSaveAndReturnDto() {
     StudentRequestDto requestDto = new StudentRequestDto(
         "John", "Doe", "john.doe@example.com",
-        LocalDate.of(2000, 1, 1), BigDecimal.TEN
+        LocalDate.of(2000, 1, 1), BigDecimal.TEN, LocaleCode.EN
     );
     Student student = new Student();
     Student savedStudent = new Student();
@@ -75,14 +77,18 @@ public class StudentServiceTest {
         "C", "D", "c@d.com", null, BigDecimal.TEN, Set.of());
 
     List<Student> students = List.of(student1, student2);
-    when(studentRepository.findAll()).thenReturn(students);
+    Pageable pageable = org.springframework.data.domain.PageRequest
+        .of(0, 10, org.springframework.data.domain.Sort.by("created").descending());
+    org.springframework.data.domain.Page<Student> page = new org.springframework.data.domain.PageImpl<>(students);
+
+    when(studentRepository.findAll(pageable)).thenReturn(page);
     when(studentMapper.toResponseDto(student1)).thenReturn(dto1);
     when(studentMapper.toResponseDto(student2)).thenReturn(dto2);
 
-    List<StudentResponseDto> result = studentService.getAllStudents();
+    List<StudentResponseDto> result = studentService.getAllStudents(0, 10, "created", "desc");
 
     assertEquals(List.of(dto1, dto2), result);
-    verify(studentRepository).findAll();
+    verify(studentRepository).findAll(pageable);
     verify(studentMapper).toResponseDto(student1);
     verify(studentMapper).toResponseDto(student2);
   }
@@ -92,7 +98,7 @@ public class StudentServiceTest {
     UUID id = UUID.randomUUID();
     StudentRequestDto requestDto = new StudentRequestDto(
         "John", "Doe", "john.doe@example.com",
-        LocalDate.of(1999, 5, 5), BigDecimal.valueOf(50)
+        LocalDate.of(1999, 5, 5), BigDecimal.valueOf(50), LocaleCode.EN
     );
     Student existingStudent = new Student();
     Student updatedStudent = new Student();
@@ -121,7 +127,7 @@ public class StudentServiceTest {
   void updateStudent_shouldThrowIfNotFound() {
     UUID id = UUID.randomUUID();
     StudentRequestDto requestDto = new StudentRequestDto("A", "B",
-        "a@b.com", null, BigDecimal.ONE);
+        "a@b.com", null, BigDecimal.ONE, LocaleCode.EN);
     when(studentRepository.findById(id)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> studentService.updateStudent(id, requestDto));

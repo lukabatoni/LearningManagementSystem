@@ -1,4 +1,4 @@
-package com.example.lms.student;
+package com.example.lms.integration.student;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.lms.course.model.Course;
 import com.example.lms.course.model.CourseSettings;
 import com.example.lms.course.repository.CourseRepository;
+import com.example.lms.enums.LocaleCode;
 import com.example.lms.student.dto.StudentRequestDto;
 import com.example.lms.student.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+@ActiveProfiles("local")
 @SpringBootTest
 @AutoConfigureMockMvc
 public class StudentControllerIntegrationTest {
@@ -43,6 +46,12 @@ public class StudentControllerIntegrationTest {
   private CourseRepository courseRepository;
 
   private UUID courseId;
+
+  private String basicAuthHeader() {
+    String plainCreds = "user:password";
+    byte[] base64CredsBytes = java.util.Base64.getEncoder().encode(plainCreds.getBytes());
+    return "Basic " + new String(base64CredsBytes);
+  }
 
   @BeforeEach
   void setUp() {
@@ -68,7 +77,8 @@ public class StudentControllerIntegrationTest {
         "Doe",
         "john.doe@example.com",
         LocalDate.of(2000, 1, 1),
-        BigDecimal.valueOf(100)
+        BigDecimal.valueOf(100),
+        LocaleCode.EN
     );
   }
 
@@ -77,6 +87,7 @@ public class StudentControllerIntegrationTest {
     var request = validStudentRequest();
 
     mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
@@ -94,10 +105,12 @@ public class StudentControllerIntegrationTest {
         "",
         "invalid-email",
         LocalDate.now().plusDays(1),
-        BigDecimal.valueOf(-10)
+        BigDecimal.valueOf(-10),
+        LocaleCode.EN
     );
 
     mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidRequest)))
         .andExpect(status().isBadRequest())
@@ -111,7 +124,8 @@ public class StudentControllerIntegrationTest {
 
   @Test
   void getAllStudents_shouldReturnEmptyListInitially() throws Exception {
-    mockMvc.perform(get("/api/v1/students"))
+    mockMvc.perform(get("/api/v1/students")
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(0)));
   }
@@ -120,11 +134,13 @@ public class StudentControllerIntegrationTest {
   void getAllStudents_shouldReturnListOfStudents() throws Exception {
     var request = validStudentRequest();
     mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated());
 
-    mockMvc.perform(get("/api/v1/students"))
+    mockMvc.perform(get("/api/v1/students")
+        .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
         .andExpect(jsonPath("$[0].firstName").value("John"));
@@ -134,6 +150,7 @@ public class StudentControllerIntegrationTest {
   void updateStudent_shouldUpdateAndReturnStudent() throws Exception {
     var request = validStudentRequest();
     String response = mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
@@ -144,10 +161,12 @@ public class StudentControllerIntegrationTest {
         "Smith",
         "jane.smith@example.com",
         LocalDate.of(1995, 5, 5),
-        BigDecimal.valueOf(50)
+        BigDecimal.valueOf(50),
+        LocaleCode.EN
     );
 
     mockMvc.perform(put("/api/v1/students/{id}", studentId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isOk())
@@ -163,6 +182,7 @@ public class StudentControllerIntegrationTest {
     var updateRequest = validStudentRequest();
 
     mockMvc.perform(put("/api/v1/students/{id}", randomId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
         .andExpect(status().isNotFound())
@@ -173,6 +193,7 @@ public class StudentControllerIntegrationTest {
   void updateStudent_shouldReturnBadRequestOnInvalidData() throws Exception {
     var request = validStudentRequest();
     String response = mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
@@ -183,10 +204,12 @@ public class StudentControllerIntegrationTest {
         "",
         "bad-email",
         LocalDate.now().plusDays(1),
-        BigDecimal.valueOf(-1)
+        BigDecimal.valueOf(-1),
+        LocaleCode.EN
     );
 
     mockMvc.perform(put("/api/v1/students/{id}", studentId)
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidUpdate)))
         .andExpect(status().isBadRequest())
@@ -202,15 +225,18 @@ public class StudentControllerIntegrationTest {
   void deleteStudent_shouldDeleteAndReturnNoContent() throws Exception {
     var request = validStudentRequest();
     String response = mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
     UUID studentId = UUID.fromString(objectMapper.readTree(response).get("id").asText());
 
-    mockMvc.perform(delete("/api/v1/students/{id}", studentId))
+    mockMvc.perform(delete("/api/v1/students/{id}", studentId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNoContent());
 
-    mockMvc.perform(get("/api/v1/students"))
+    mockMvc.perform(get("/api/v1/students")
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(0)));
   }
@@ -218,7 +244,8 @@ public class StudentControllerIntegrationTest {
   @Test
   void deleteStudent_shouldReturnNotFoundForInvalidId() throws Exception {
     UUID randomId = UUID.randomUUID();
-    mockMvc.perform(delete("/api/v1/students/{id}", randomId))
+    mockMvc.perform(delete("/api/v1/students/{id}", randomId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message", containsString("Student not found")));
   }
@@ -227,19 +254,22 @@ public class StudentControllerIntegrationTest {
   void buyCourseWithCoins_shouldSucceed() throws Exception {
     var request = validStudentRequest();
     String response = mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
     UUID studentId = UUID.fromString(objectMapper.readTree(response).get("id").asText());
 
-    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", studentId, courseId))
+    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", studentId, courseId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNoContent());
   }
 
   @Test
   void buyCourseWithCoins_shouldReturnNotFoundForInvalidStudent() throws Exception {
     UUID randomStudentId = UUID.randomUUID();
-    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", randomStudentId, courseId))
+    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", randomStudentId, courseId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message", containsString("Student not found")));
   }
@@ -248,13 +278,15 @@ public class StudentControllerIntegrationTest {
   void buyCourseWithCoins_shouldReturnNotFoundForInvalidCourse() throws Exception {
     var request = validStudentRequest();
     String response = mockMvc.perform(post("/api/v1/students")
+            .header("Authorization", basicAuthHeader())
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andReturn().getResponse().getContentAsString();
     UUID studentId = UUID.fromString(objectMapper.readTree(response).get("id").asText());
     UUID randomCourseId = UUID.randomUUID();
 
-    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", studentId, randomCourseId))
+    mockMvc.perform(post("/api/v1/students/{studentId}/buy-course/{courseId}", studentId, randomCourseId)
+            .header("Authorization", basicAuthHeader()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message", containsString("Course not found")));
   }

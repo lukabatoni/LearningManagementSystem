@@ -1,0 +1,102 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6-hana
+      author: admin
+      context: hana
+      changes:
+        - createTable:
+            tableName: classroom_lesson
+            columns:
+              - column:
+                  name: id
+                  type: VARBINARY(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: location
+                  type: VARCHAR(255)
+              - column:
+                  name: capacity
+                  type: INT
+        - addForeignKeyConstraint:
+            baseTableName: classroom_lesson
+            baseColumnNames: id
+            referencedTableName: lessons
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_classroom_lesson_lesson
+
+        - createTable:
+            tableName: video_lesson
+            columns:
+              - column:
+                  name: id
+                  type: VARBINARY(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(512)
+              - column:
+                  name: platform
+                  type: VARCHAR(255)
+        - addForeignKeyConstraint:
+            baseTableName: video_lesson
+            baseColumnNames: id
+            referencedTableName: lessons
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_video_lesson_lesson
+
+  - changeSet:
+      id: 6-postgres
+      author: admin
+      context: postgres
+      changes:
+        - createTable:
+            tableName: classroom_lesson
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: location
+                  type: VARCHAR(255)
+              - column:
+                  name: capacity
+                  type: INT
+        - addForeignKeyConstraint:
+            baseTableName: classroom_lesson
+            baseColumnNames: id
+            referencedTableName: lessons
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_classroom_lesson_lesson
+
+        - createTable:
+            tableName: video_lesson
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(512)
+              - column:
+                  name: platform
+                  type: VARCHAR(255)
+        - addForeignKeyConstraint:
+            baseTableName: video_lesson
+            baseColumnNames: id
+            referencedTableName: lessons
+            referencedColumnNames: id
+            onDelete: CASCADE
+            constraintName: fk_video_lesson_lesson

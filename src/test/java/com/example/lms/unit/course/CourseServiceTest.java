@@ -1,4 +1,4 @@
-package com.example.lms.course;
+package com.example.lms.unit.course;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public class CourseServiceTest {
   private CourseRepository courseRepository;
@@ -90,14 +92,20 @@ public class CourseServiceTest {
         UUID.randomUUID(), "B", "descB", BigDecimal.TEN, BigDecimal.ONE, settings2, Set.of(), Set.of()
     );
 
-    when(courseRepository.findAll()).thenReturn(List.of(course1, course2));
+    List<Course> courses = List.of(course1, course2);
+    Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("created").descending());
+    org.springframework.data.domain.Page<Course> page = new org.springframework.data.domain.PageImpl<>(courses);
+
+    when(courseRepository.findAll(pageable)).thenReturn(page);
     when(courseMapper.toResponseDto(course1)).thenReturn(dto1);
     when(courseMapper.toResponseDto(course2)).thenReturn(dto2);
 
-    List<CourseResponseDto> result = courseService.getAllCourses();
+    Page<CourseResponseDto> result = courseService.getAllCourses(0, 10, "created", "desc");
 
-    assertEquals(List.of(dto1, dto2), result);
-    verify(courseRepository).findAll();
+    assertEquals(2, result.getContent().size());
+    assertEquals(dto1, result.getContent().get(0));
+    assertEquals(dto2, result.getContent().get(1));
+    verify(courseRepository).findAll(pageable);
     verify(courseMapper).toResponseDto(course1);
     verify(courseMapper).toResponseDto(course2);
   }

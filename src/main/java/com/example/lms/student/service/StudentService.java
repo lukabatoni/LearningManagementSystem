@@ -15,7 +15,9 @@ import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,10 +41,15 @@ public class StudentService {
     return studentMapper.toResponseDto(savedStudent);
   }
 
-  @Cacheable(value = "students")
-  public List<StudentResponseDto> getAllStudents() {
-    List<Student> students = studentRepository.findAll();
-    return students.stream()
+  public List<StudentResponseDto> getAllStudents(
+      final int page,
+      final int pageSize,
+      @NonNull final String sortBy,
+      @NonNull final String direction
+  ) {
+    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    Pageable pageable = PageRequest.of(page, pageSize, sort);
+    return studentRepository.findAll(pageable).stream()
         .map(studentMapper::toResponseDto)
         .toList();
   }
@@ -58,6 +65,7 @@ public class StudentService {
     student.setEmail(requestDto.email());
     student.setDateOfBirth(requestDto.dateOfBirth());
     student.setCoins(requestDto.coins());
+    student.setLocale(requestDto.locale());
     Student updatedStudent = studentRepository.save(student);
     return studentMapper.toResponseDto(updatedStudent);
   }

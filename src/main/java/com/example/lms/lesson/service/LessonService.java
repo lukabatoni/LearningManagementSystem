@@ -8,12 +8,15 @@ import com.example.lms.lesson.dto.LessonResponseDto;
 import com.example.lms.lesson.mapper.LessonMapper;
 import com.example.lms.lesson.model.Lesson;
 import com.example.lms.lesson.repository.LessonRepository;
-import java.util.List;
 import java.util.UUID;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +44,16 @@ public class LessonService {
   }
 
   @Cacheable(value = "lessons")
-  public List<LessonResponseDto> getAllLessons() {
-    var lessons = lessonRepository.findAll();
-    return lessons.stream()
-        .map(lessonMapper::toResponseDto)
-        .toList();
+  public Page<LessonResponseDto> getAllLessons(
+      final int page,
+      final int pageSize,
+      @NonNull final String sortBy,
+      @NonNull final String direction
+  ) {
+    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    Pageable pageable = PageRequest.of(page, pageSize, sort);
+    Page<Lesson> lessonPage = lessonRepository.findAll(pageable);
+    return lessonPage.map(lessonMapper::toResponseDto);
   }
 
   @Transactional

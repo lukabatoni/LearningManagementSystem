@@ -1,4 +1,4 @@
-package com.example.lms.lesson;
+package com.example.lms.unit.lesson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
