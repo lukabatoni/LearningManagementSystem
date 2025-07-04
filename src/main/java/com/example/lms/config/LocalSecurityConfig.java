@@ -16,6 +16,7 @@ public class LocalSecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+        .cors(Customizer.withDefaults())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/actuator/**").hasRole(MANAGER_ROLE)
             .anyRequest().authenticated()
