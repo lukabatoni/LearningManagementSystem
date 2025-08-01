@@ -31,7 +31,7 @@ public class CourseController {
 
   @Operation(
       summary = "Create a new course",
-      description = "Creates a new course with the provided details"
+      description = "Creates a new course with the provided properties"
   )
   @PostMapping
   public ResponseEntity<CourseResponseDto> createCourse(@RequestBody @Valid CourseRequestDto requestDto) {
