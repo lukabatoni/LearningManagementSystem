@@ -56,7 +56,7 @@ public class CourseController {
 
   @Operation(
       summary = "Update a course",
-      description = "Updates the details of an existing course"
+      description = "Updates the properties of an existing course"
   )
   @PutMapping("/{id}")
   public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable UUID id,
